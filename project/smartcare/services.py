@@ -1,6 +1,5 @@
 """Simple workflows using a shared SmartCareDataStore object."""
 
-
 from datetime import datetime
 
 from smartcare.data_store import SmartCareDataStore
@@ -35,7 +34,16 @@ class PatientService:
         a blank/invalid ID. It must not create a replacement patient.
         The starter deliberately raises NotImplementedError.
         """
-        raise NotImplementedError('Stage 6: patient lookup')
+
+        if not isinstance(patient_id, str) or not patient_id.strip():
+            raise ValueError('Patient ID must be a non-blank string')
+
+        patient = self.data_store.find_patient(patient_id)
+
+        if patient is None:
+            raise LookupError('Patient not found')
+
+        return patient
 
 
 class PractitionerService:
