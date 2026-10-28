@@ -134,3 +134,100 @@ def test_find_patient_does_not_change_record():
 
     assert patient.patient_id == "P001"
     assert patient.name == "Alex Example"
+
+
+from datetime import datetime
+
+import pytest
+
+from smartcare.data_store import SmartCareDataStore
+from smartcare.domain import Appointment, AppointmentStatus
+from smartcare.services import (
+    AppointmentService,
+    PatientService,
+    PractitionerService,
+)
+
+
+@pytest.fixture
+def cancellation_setup():
+    store = SmartCareDataStore()
+
+    patient = PatientService(store).register_patient(
+        "P1", "Alex Example"
+    )
+    practitioner = PractitionerService(store).register_practitioner(
+        "D1", "Taylor Example", "General"
+    )
+
+    service = AppointmentService(store)
+    appointment = service.book_appointment(
+        "A1", "P1", "D1", datetime(2026, 10, 26, 10, 0)
+    )
+
+    return store, service, appointment, patient, practitioner
+
+
+def test_cancel_retains_same_appointment(cancellation_setup):
+    store, service, appointment, _, _ = cancellation_setup
+
+    result = service.cancel_appointment("A1")
+
+    assert result is appointment
+    assert appointment.status is AppointmentStatus.CANCELLED
+    assert service.find_appointment("A1") is appointment
+    assert store.list_appointments() == [appointment]
+
+
+@pytest.mark.parametrize(
+    "appointment_id, expected_error",
+    [
+        ("UNKNOWN", LookupError),
+        ("", ValueError),
+        ("   ", ValueError),
+        (None, ValueError),
+    ],
+)
+def test_cancel_rejects_invalid_or_unknown_id(
+    cancellation_setup, appointment_id, expected_error
+):
+    store, service, appointment, _, _ = cancellation_setup
+
+    with pytest.raises(expected_error):
+        service.cancel_appointment(appointment_id)
+
+    assert appointment.status is AppointmentStatus.SCHEDULED
+    assert store.list_appointments() == [appointment]
+
+
+def test_repeated_cancellation_is_rejected(cancellation_setup):
+    store, service, appointment, _, _ = cancellation_setup
+    service.cancel_appointment("A1")
+
+    with pytest.raises(ValueError):
+        service.cancel_appointment("A1")
+
+    assert appointment.status is AppointmentStatus.CANCELLED
+    assert service.find_appointment("A1") is appointment
+    assert store.list_appointments() == [appointment]
+
+
+def test_completed_appointment_cannot_be_cancelled(cancellation_setup):
+    store, service, _, patient, practitioner = cancellation_setup
+
+    completed = Appointment(
+        "A2",
+        patient,
+        practitioner,
+        datetime(2026, 10, 26, 11, 0),
+        AppointmentStatus.COMPLETED,
+    )
+    store.add_appointment(completed)
+    before = store.list_appointments()
+
+    with pytest.raises(ValueError):
+        service.cancel_appointment("A2")
+
+    assert completed.status is AppointmentStatus.COMPLETED
+    assert service.find_appointment("A2") is completed
+    assert store.list_appointments() == before
