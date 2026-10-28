@@ -1,6 +1,8 @@
-import pytest
-from smartcare.domain import Patient, Practitioner, Appointment, AppointmentStatus
 from datetime import datetime, timezone
+
+import pytest
+
+from smartcare.domain import Appointment, AppointmentStatus, Patient, Practitioner
 
 
 # Patient Domain Tests
@@ -11,13 +13,13 @@ def test_valid_patient() -> None:
     assert patient.patient_id == "P1"
     assert patient.name == "Alex"
 
-@pytest.mark.parametrize("patient_id", ["", "   ", None])
+@pytest.mark.parametrize("patient_id", ["", "   ", None, 123])
 def test_invalid_patient_id(patient_id) -> None:
     """Verify invalid patient IDs are rejected."""
     with pytest.raises(ValueError):
         Patient(patient_id, "Alex")
 
-@pytest.mark.parametrize("name", ["", "   ", None])
+@pytest.mark.parametrize("name", ["", "   ", None, 123])
 def test_invalid_patient_name(name) -> None:
     """Verify invalid patient names are rejected."""
     with pytest.raises(ValueError):
@@ -39,19 +41,19 @@ def test_valid_practitioner() -> None:
     assert practitioner.name == "Dr Smith"
     assert practitioner.specialty == "GP"
 
-@pytest.mark.parametrize("practitioner_id", ["", "   ", None])
+@pytest.mark.parametrize("practitioner_id", ["", "   ", None, 123])
 def test_invalid_practitioner_id(practitioner_id) -> None:
     """Verify invalid practitioner IDs are rejected."""
     with pytest.raises(ValueError):
         Practitioner(practitioner_id, "Dr Smith", "GP")
 
-@pytest.mark.parametrize("name", ["", "   ", None])
+@pytest.mark.parametrize("name", ["", "   ", None, 123])
 def test_invalid_practitioner_name(name) -> None:
     """Verify invalid practitioner names are rejected."""
     with pytest.raises(ValueError):
         Practitioner("DR1", name, "GP")
 
-@pytest.mark.parametrize("specialty", ["", "   ", None])
+@pytest.mark.parametrize("specialty", ["", "   ", None, 123])
 def test_invalid_practitioner_specialty(specialty) -> None:
     """Verify invalid practitioner specialties are rejected."""
     with pytest.raises(ValueError):
@@ -70,7 +72,7 @@ def test_valid_appointment() -> None:
     """Verify valid appointment construction and initial status."""
     patient = Patient("P1", "Alex")
     practitioner = Practitioner("DR1", "Dr Smith", "GP")
-    date_time = datetime(2026, 10, 28, 10, 0)
+    date_time = datetime(2026, 10, 28, 10, 0, 0, 0)
     appointment = Appointment("A1", patient, practitioner, date_time)
     assert appointment.appointment_id == "A1"
     assert appointment.patient is patient
@@ -78,7 +80,7 @@ def test_valid_appointment() -> None:
     assert appointment.date_time == date_time
     assert appointment.status is AppointmentStatus.SCHEDULED
 
-@pytest.mark.parametrize("appointment_id", ["", "   ", None])
+@pytest.mark.parametrize("appointment_id", ["", "   ", None, 123])
 def test_invalid_appointment_id(appointment_id) -> None:
     """Verify invalid appointment IDs are rejected."""
     patient = Patient("P1", "Alex")
@@ -145,6 +147,7 @@ def test_completed_appointment_cancellation() -> None:
     patient = Patient("P1", "Alex")
     practitioner = Practitioner("DR1", "Dr Smith", "GP")
     date_time = datetime(2026, 10, 28, 10, 0)
+    # Create an appointment with initial COMPLETED status
     appointment = Appointment("A1", patient, practitioner, date_time, AppointmentStatus.COMPLETED)
     with pytest.raises(ValueError):
         appointment.cancel()
