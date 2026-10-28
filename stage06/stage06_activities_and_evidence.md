@@ -11,14 +11,19 @@ Complete this one group record. Link actual issues, diffs, tests and reviews; av
 
 ### FR-02 Patient Search
 
-- Title: [response]
-- Context: [response]
-- Requirement: [response]
-- Acceptance criteria: [response]
-- Scope: [response]
-- Definition of Done: [response]
-- Owner: [response]
-- Actual issue link: [response]
+- Title: Patient Search by ID
+- Context: Receptionist need to find registered patients quickly using their patient IDs.
+- Requirement: The system must allow a user to search for a patient using a valid patient ID.
+- Acceptance criteria: The system returns the matching patient when the patient ID exists. It rejects a blank or invalid patient ID and raises an appropriate error when the patient cannot be found.
+- Scope: Patient lookup and input validation in the service layer.
+- Definition of Done: The lookup method is implemented, invalid inputs are handled, missing patients are reported appropriately, and the supplied tests pass.
+- Owner: Ujwal BK
+- Actual issue link: https://github.com/Saphal-uc/Assignment-3/issues/2
+
+* Test command: PYTHONPATH=project python3 -m pytest project/tests/test_starter.py -v
+* Working directory: st1-assignment-3 project root
+* Observed result: 8 tests passed in 0.01 seconds.
+* Additional check: git diff --check completed without reporting errors.
 
 ### FR-06 Appointment Cancellation with FR-07 retained history
 
