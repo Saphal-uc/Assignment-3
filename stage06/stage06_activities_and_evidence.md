@@ -38,22 +38,22 @@ Complete this one group record. Link actual issues, diffs, tests and reviews; av
 
 ## B Commit quality
 
-| Original example | Strong or Weak | Reason |
-|---|---|---|
-| changes | [select] | [response] |
-| final version | [select] | [response] |
-| Add patient search by ID | [select] | [response] |
-| fix stuff | [select] | [response] |
-| Prevent cancellation of completed appointments | [select] | [response] |
+| Original example | Strong or Weak | Reason                                                       |
+|---|----------------|--------------------------------------------------------------|
+| changes | Weak           | The message does not explain what changed or why             |
+| final version | Weak           | It does not identify the implemented functionality           |
+| Add patient search by ID | Strong         | It clearly identifies the features being implemented         |
+| fix stuff | Weak           | It does not explain the problem fixed                        |
+| Prevent cancellation of completed appointments | Strong         | The message describe a specific behaviour and business rule. |
 
 ## C Over scoped PR review
 
 A cancellation PR also renames unrelated patient fields, restructures unrelated code and adds a new dependency.
 
-- Scope concerns: [response]
-- Responsibility and architecture concerns: [response]
-- Testing and review concerns: [response]
-- Changes to remove or separate, with reasons: [response]
+- Scope concerns: The pull Request combines appointment cancellation with unrelated patient-field renaming, code restructuring and a new dependency. This increases the scope of the review and makes it harder to identify the changes necessary for the cancellation requirement. 
+- Responsibility and architecture concerns: Unrelated patient-field changes may affect patient management responsibilities, while cancellation belongs to appointment management. Combining these changes can increase coupling and introduce unintended effects on existing functionality.
+- Testing and review concerns: The reviewer needs to verify appointment cancellation, retained appointment history, existing patient functionality and the effects of the new dependency. Regression tests are necessary to ensure that unrelated functionality continues to work.
+- Changes to remove or separate, with reasons: Keep the appointment cancellation and retained history changes in the current Pull request. Move unrelated patient-field renaming and refactoring into separate Pull Requests unless they are essential to the requirement. Include the new dependency only if it is justified and necessary, with appropriate testing and documentation.
 
 ## D Challenge a weak Copilot review
 
