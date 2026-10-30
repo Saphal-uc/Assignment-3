@@ -73,6 +73,26 @@ def test_find_practitioner_does_not_change_record():
     assert practitioner.name == "Taylor Example"
     assert practitioner.specialty == "General"
 
+@pytest.mark.parametrize("practitioner_id", ["", None])
+def test_find_practitioner_rejects_empty_or_none_id(practitioner_id):
+    """Reject an empty or None practitioner ID."""
+    _, service, _ = setup_practitioner()
+
+    with pytest.raises(ValueError):
+        service.find_practitioner(practitioner_id)
+
+
+def test_find_practitioner_repeated_lookup_returns_same_object():
+    """Repeated lookups return the same registered practitioner."""
+    _, service, practitioner = setup_practitioner()
+
+    first_result = service.find_practitioner("D1")
+    second_result = service.find_practitioner("D1")
+
+    assert first_result is practitioner
+    assert second_result is practitioner
+    assert first_result is second_result
+
 def setup_patient():
     """Create a store and register one patient."""
     data_store = SmartCareDataStore()
