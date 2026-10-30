@@ -231,3 +231,58 @@ def test_completed_appointment_cannot_be_cancelled(cancellation_setup):
     assert completed.status is AppointmentStatus.COMPLETED
     assert service.find_appointment("A2") is completed
     assert store.list_appointments() == before
+
+def test_cancelled_appointment_slot_can_be_reused(cancellation_setup):
+    """Verify a cancelled appointment no longer blocks its time slot."""
+
+    store, service, original, patient, practitioner = cancellation_setup
+
+    # Arrange: cancel the existing appointment.
+    service.cancel_appointment("A1")
+
+    # Act: book another appointment at the same time.
+    replacement = service.book_appointment(
+        "A2",
+        "P1",
+        "D1",
+        original.date_time,
+    )
+
+    # Assert: the original remains cancelled.
+    assert original.status is AppointmentStatus.CANCELLED
+
+    # Assert: the replacement is successfully scheduled.
+    assert replacement.status is AppointmentStatus.SCHEDULED
+
+    # Assert: both appointments remain in the store.
+    assert service.find_appointment("A1") is original
+    assert service.find_appointment("A2") is replacement
+    assert store.list_appointments() == [original, replacement]
+
+def test_rejected_booking_conflict_preserves_existing_appointment(cancellation_setup):
+    """Verify a rejected booking does not modify the existing appointment."""
+
+    store, service, original, patient, practitioner = cancellation_setup
+
+    # Arrange: capture the original appointment state.
+    original_status = original.status
+    original_date_time = original.date_time
+    original_count = len(store.list_appointments())
+
+    # Act and assert: conflicting booking must be rejected.
+    with pytest.raises(ValueError):
+        service.book_appointment(
+            "A2",
+            "P1",
+            "D1",
+            original.date_time,
+        )
+
+    # Assert: original appointment remains unchanged.
+    assert original.status is original_status
+    assert original.date_time == original_date_time
+    assert service.find_appointment("A1") is original
+
+    # Assert: rejected appointment was not stored.
+    assert len(store.list_appointments()) == original_count
+    assert store.find_appointment("A2") is None
