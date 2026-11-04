@@ -188,15 +188,6 @@ def cancellation_setup():
     return store, service, appointment, patient, practitioner
 
 
-def test_cancel_retains_same_appointment(cancellation_setup):
-    store, service, appointment, _, _ = cancellation_setup
-
-    result = service.cancel_appointment("A1")
-
-    assert result is appointment
-    assert appointment.status is AppointmentStatus.CANCELLED
-    assert service.find_appointment("A1") is appointment
-    assert store.list_appointments() == [appointment]
 
 
 @pytest.mark.parametrize(
@@ -221,25 +212,35 @@ def test_cancel_rejects_invalid_or_unknown_id(
 
 
 def test_repeated_cancellation_is_rejected(cancellation_setup):
-    store, service, appointment, _, _ = cancellation_setup
-    service.cancel_appointment("A1")
+    """Repeated cancellation preserves all appointment details."""
+    store, service, appointment, patient, practitioner = cancellation_setup
+    original_id = appointment.appointment_id
+    original_time = appointment.date_time
+
+    service.cancel_appointment(original_id)
 
     with pytest.raises(ValueError):
-        service.cancel_appointment("A1")
+        service.cancel_appointment(original_id)
 
     assert appointment.status is AppointmentStatus.CANCELLED
-    assert service.find_appointment("A1") is appointment
+    assert appointment.appointment_id == original_id
+    assert appointment.patient is patient
+    assert appointment.practitioner is practitioner
+    assert appointment.date_time == original_time
+    assert service.find_appointment(original_id) is appointment
     assert store.list_appointments() == [appointment]
 
 
 def test_completed_appointment_cannot_be_cancelled(cancellation_setup):
+    """Rejected cancellation preserves a completed appointment."""
     store, service, _, patient, practitioner = cancellation_setup
+    original_time = datetime(2026, 10, 26, 11, 0)
 
     completed = Appointment(
         "A2",
         patient,
         practitioner,
-        datetime(2026, 10, 26, 11, 0),
+        original_time,
         AppointmentStatus.COMPLETED,
     )
     store.add_appointment(completed)
@@ -249,12 +250,39 @@ def test_completed_appointment_cannot_be_cancelled(cancellation_setup):
         service.cancel_appointment("A2")
 
     assert completed.status is AppointmentStatus.COMPLETED
+    assert completed.appointment_id == "A2"
+    assert completed.patient is patient
+    assert completed.practitioner is practitioner
+    assert completed.date_time == original_time
     assert service.find_appointment("A2") is completed
     assert store.list_appointments() == before
 
+def test_cancel_retains_same_appointment(cancellation_setup):
+    """Cancellation changes only status and retains the same record."""
+    store, service, appointment, patient, practitioner = cancellation_setup
+
+    # Arrange: remember the original identity and time.
+    original_id = appointment.appointment_id
+    original_time = appointment.date_time
+
+    # Act: cancel through the service.
+    result = service.cancel_appointment(original_id)
+
+    # Assert: status changes, but all other details remain.
+    assert result is appointment
+    assert appointment.status is AppointmentStatus.CANCELLED
+    assert appointment.appointment_id == original_id
+    assert appointment.patient is patient
+    assert appointment.practitioner is practitioner
+    assert appointment.date_time == original_time
+
+    # The same appointment remains stored and retrievable.
+    assert service.find_appointment(original_id) is appointment
+    assert store.list_appointments() == [appointment]
+
+
 def test_cancelled_appointment_slot_can_be_reused(cancellation_setup):
     """Verify a cancelled appointment no longer blocks its time slot."""
-
     store, service, original, patient, practitioner = cancellation_setup
 
     # Arrange: cancel the existing appointment.
@@ -278,6 +306,33 @@ def test_cancelled_appointment_slot_can_be_reused(cancellation_setup):
     assert service.find_appointment("A1") is original
     assert service.find_appointment("A2") is replacement
     assert store.list_appointments() == [original, replacement]
+
+def test_cancel_does_not_change_other_appointment(cancellation_setup):
+    """Cancelling A1 leaves A2 unchanged."""
+    store, service, first, patient, practitioner = cancellation_setup
+
+    # Arrange: book A2 at a different time.
+    second_time = datetime(2026, 10, 26, 11, 0)
+    second = service.book_appointment(
+        "A2", "P1", "D1", second_time
+    )
+
+    # Act: cancel only A1.
+    service.cancel_appointment("A1")
+
+    # Assert: A1 is cancelled.
+    assert first.status is AppointmentStatus.CANCELLED
+
+    # A2 keeps its original status and details.
+    assert second.status is AppointmentStatus.SCHEDULED
+    assert second.appointment_id == "A2"
+    assert second.patient is patient
+    assert second.practitioner is practitioner
+    assert second.date_time == second_time
+    assert service.find_appointment("A2") is second
+
+    # Both records remain stored.
+    assert store.list_appointments() == [first, second]
 
 def test_rejected_booking_conflict_preserves_existing_appointment(cancellation_setup):
     """Verify a rejected booking does not modify the existing appointment."""
