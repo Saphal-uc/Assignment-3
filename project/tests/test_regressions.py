@@ -1,9 +1,9 @@
 import pytest
 from datetime import datetime
 
-from smartcare import data_store
 from smartcare.data_store import SmartCareDataStore
 from smartcare.services import PatientService, PractitionerService, AppointmentService
+from smartcare.domain import AppointmentStatus
 
 def setup_booking():
     """Create a data store, register two patients and two practitioners."""
@@ -38,3 +38,16 @@ def test_f8_01_different_practitioner():
     # Check different practitioners at the same time
     appointment_service.book_appointment("A2", "P2", "D2", date_time)
     assert len(data_store.list_appointments()) == 2
+
+def test_f8_02_cancelled_appointment_retained():
+    data_store, appointment_service = setup_booking()
+    date_time = datetime(2026, 11, 5, 10)
+    appointment = appointment_service.book_appointment("A1", "P1", "D1", date_time)
+    appointment_service.cancel_appointment("A1")
+
+    # Check if the appointment status changes to CANCELLED
+    assert appointment.status is AppointmentStatus.CANCELLED
+    # Check if the appointment record is still stored
+    assert len(data_store.list_appointments()) == 1
+    # Check if the original appointment can still be found
+    assert appointment_service.find_appointment("A1") is appointment

@@ -97,10 +97,31 @@ test_rejected_booking_conflict_preserves_existing_appointment: Failed (DID NOT R
 
 ## D. F8-02 diagnosis and repair
 
-- Symptom / observed behaviour: [complete]
-- Expected behaviour and requirement: [complete]
-- Minimal synthetic reproduction steps: [complete]
-- Meaningful failing test path/name and exact relevant failure: [complete]
+- Symptom / observed behaviour: 
+
+The system could not find an appointment after it was cancelled. Three existing tests failed with LookupError: Appointment not found.
+
+- Expected behaviour and requirement: 
+
+The system should keep the appointment after it is cancelled. The status should change to CANCELLED. Also, we should still be able to find it using its ID.
+
+- Minimal synthetic reproduction steps: 
+1. Register one patient and one practitioner.
+2. Create an appointment A1 for the patient and practitioner.
+3. Cancel appointment A1.
+4. Try to find A1 using its ID.
+5. Check if A1 can still be found and its status is CANCELLED.
+
+- Meaningful failing test path/name and exact relevant failure: 
+
+File: tests/test_services.py
+
+test_repeated_cancellation_is_rejected (LookupError: Appointment not found.)
+
+test_cancel_retains_same_appointment (LookupError: Appointment not found.)
+
+test_cancelled_appointment_slot_can_be_reused (LookupError: Appointment not found.)
+
 - Human hypothesis and intended checks: see E, F8-02.
 - Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
 - Smallest justified fix / diff / why other behaviour is preserved: [complete]
@@ -126,11 +147,28 @@ Discriminating check:
 
 Check whether the system performs a duplicate booking check when creating an appointment. If it does, check whether the logic is correct.
 
-Member and saved sequence/time or commit showing this preceded consultation: [complete]
+Member and saved sequence/time or commit showing this preceded consultation: 
+
+Hong Ruan — Commit 6b88467ccba08e66319d783b7440615859862223
 
 ### F8-02 human entry
-Likely cause and why plausible: [complete]
-Evidence intended to inspect / competing explanation / discriminating check: [complete]
+Likely cause and why plausible: 
+
+The system may not keep the cancelled appointment in the data store.
+
+Evidence to inspect:
+
+Check the code related to the appointment record after cancellation.
+
+Competing explanation:
+
+The appointment may still be stored, but the find appointment function does not return it.
+
+Discriminating check:
+
+1. Check if the appointment status changes to CANCELLED. 
+2. Check if the record is still stored. If it is, check if the find appointment function returns it.
+
 Member and saved sequence/time or commit showing this preceded consultation: [complete]
 
 ## F. GitHub Copilot prompts, findings and human decisions
@@ -153,13 +191,13 @@ Final human conclusion and comparison with initial hypothesis: [complete]
 
 ## G. Failing to passing regression evidence
 
-| Checkpoint | Code SHA or precise diff | Command and working directory | Actual result and artefact reference |
-|---|---|---|---|
-| F8-01 before repair | [complete] | python3 -m pytest tests/test_regressions.py -vv -s | 2 failed in 0.03s |
-| F8-01 after repair | [complete] | [complete] | [complete] |
-| F8-02 before repair | [complete] | [complete] | [complete] |
-| F8-02 after repair | [complete] | [complete] | [complete] |
-| Full suite after both repairs, before refactor | [complete] | [complete] | [complete] |
+| Checkpoint | Code SHA or precise diff | Command and working directory                                                                 | Actual result and artefact reference                                                              |
+|---|---|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
+| F8-01 before repair | 6b88467ccba08e66319d783b7440615859862223 | python3 -m pytest tests/test_regressions.py -vv -s                                            | result: 2 failed in 0.03s artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/18 |
+| F8-01 after repair | [complete] | []                                                                                            | []                                                                                                |
+| F8-02 before repair | [complete] | python3 -m pytest tests/test_regressions.py::test_f8_02_cancelled_appointment_retained -vv -s | result: 1 failed in 0.03s artefact reference:                                                     |
+| F8-02 after repair | [complete] | [complete]                                                                                    | [complete]                                                                                        |
+| Full suite after both repairs, before refactor | [complete] | [complete]                                                                                    | [complete]                                                                                        |
 
 Explain how the assertions detect each relevant incorrect result and protect previous behaviour: [complete]
 Unrelated failures investigated / resolution: [complete or not applicable with reason]
