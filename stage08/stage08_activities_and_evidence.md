@@ -74,7 +74,8 @@ Traceback — exception/assertion; expected/observed values; test line; call pat
 The system did not reject a conflicting appointment booking. Two existing tests failed with DID NOT RAISE ValueError.
 - Expected behaviour and requirement: 
 
-The system should reject a new booking if the same practitioner already has an appointment at the same time. It should only allow different practitioners to have appointments at the same time.
+The system should reject a new booking if the same practitioner already has an appointment at the same time. It should only allow different practitioners to have appointments at the same time. (Requirement: AC-04.1, AC-04.2)
+
 - Minimal synthetic reproduction steps: 
 1. Register two patients and one practitioner.
 2. Book A1 for Patient 1 with the practitioner at a specific time.
@@ -91,9 +92,17 @@ File: tests/test_services.py
 test_rejected_booking_conflict_preserves_existing_appointment: Failed (DID NOT RAISE ValueError.)
 
 - Human hypothesis and intended checks: see E, F8-01.
-- Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
-- Smallest justified fix / diff / why other behaviour is preserved: [complete]
-- Repair SHA / focused verification result: [complete]
+- Supported root cause and inspected code/runtime evidence:
+
+The practitioner ID comparison in has_practitioner_conflict() is wrong. It uses != instead of ==. This causes the system to miss conflicts for the same practitioner and reject bookings for different practitioners.
+
+- Smallest justified fix / diff / why other behaviour is preserved: 
+
+Change != to == in has_practitioner_conflict(). It only changes the practitioner ID comparison logic. No other code is changed.
+
+- Repair SHA / focused verification result: 
+
+679d99f8681882fc0fa69c2bc11f41c89bd04c10 / 2 passed, 1 deselected in 0.01s.
 
 ## D. F8-02 diagnosis and repair
 
@@ -103,7 +112,7 @@ The system could not find an appointment after it was cancelled. Three existing 
 
 - Expected behaviour and requirement: 
 
-The system should keep the appointment after it is cancelled. The status should change to CANCELLED. Also, we should still be able to find it using its ID.
+The system should keep the appointment after it is cancelled. The status should change to CANCELLED. Also, we should still be able to find it using its ID. (Requirement: FR-07)
 
 - Minimal synthetic reproduction steps: 
 1. Register one patient and one practitioner.
@@ -123,9 +132,17 @@ test_cancel_retains_same_appointment (LookupError: Appointment not found.)
 test_cancelled_appointment_slot_can_be_reused (LookupError: Appointment not found.)
 
 - Human hypothesis and intended checks: see E, F8-02.
-- Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
-- Smallest justified fix / diff / why other behaviour is preserved: [complete]
-- Repair SHA / focused verification result: [complete]
+- Supported root cause and inspected code/runtime evidence: 
+
+The find_appointment() function does not return cancelled appointments. It checks appointment.status.value != "cancelled". Therefore, the record is still stored, but the function does not return the cancelled appointment.
+
+- Smallest justified fix / diff / why other behaviour is preserved: 
+
+Remove the appointment.status.value != "cancelled" condition from find_appointment(). Appointments can be found using their IDs, regardless of their status. No other code is changed.
+
+- Repair SHA / focused verification result: 
+
+3732390fe607a309acb7426d24dbb62605ed9f7d /  1 passed in 0.01s
 
 ## E. Human-first hypotheses
 
@@ -169,38 +186,127 @@ Discriminating check:
 1. Check if the appointment status changes to CANCELLED. 
 2. Check if the record is still stored. If it is, check if the find appointment function returns it.
 
-Member and saved sequence/time or commit showing this preceded consultation: [complete]
+Member and saved sequence/time or commit showing this preceded consultation: 
+
+Hong Ruan — Commit 64ef1947090b0c5ab88a21053bb166b4b2f8f803
 
 ## F. GitHub Copilot prompts, findings and human decisions
 
 Use the full handout prompt separately for BOTH defects, after E. Keep each actual prompt or accessible reference; include observed behaviour, expected behaviour, reproduction, failing test, human hypothesis, relevant code, three ranked causes and discriminating checks, with the no-rewrite/no-invented-requirements constraints.
 
 ### F8-01 Copilot review
-Actual prompt / output reference and member: [complete]
-1. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-2. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-3. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-Final human conclusion and comparison with initial hypothesis: [complete]
+Actual prompt / output reference and member: 
+
+Hong Ruan — GitHub Copilot Chat. https://github.com/copilot/share/82374202-0804-80e4-9950-fe0e40eb29a8
+
+1. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: 
+
+suggestion: Incorrect practitioner ID comparison
+
+Evidence check: Check has_practitioner_conflict() in data_store.py.
+
+Observed evidence: The code uses != to compare practitioner IDs.
+
+Evaluation: Correct.
+
+Decision: Accept. This explains the two failing regression tests.
+
+2. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason:
+
+Suggestion: Tests bypass the booking service
+
+Evidence check: Check how the regression tests create appointments.
+
+Observed evidence: Both tests use appointment_service.book_appointment().
+
+Evaluation: Wrong
+
+Decision: Reject. The tests do not bypass the booking service.
+
+3. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: 
+
+Suggestion:Different code version or incorrect booking data
+
+Evidence check: Check the code version and test data.
+
+Observed evidence: The test data is correct, and the code version is the same.
+
+Evaluation: Wrong.
+
+Decision: Reject. The code version and test data are both correct.
+
+Final human conclusion and comparison with initial hypothesis: 
+
+My initial hypothesis was that the system could not detect appointment conflicts correctly. Based on Copilot's suggestions, I checked the code and found that has_practitioner_conflict() uses != instead of ==. This explains why the two regression tests failed.
 
 ### F8-02 Copilot review
-Actual prompt / output reference and member: [complete]
-1. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-2. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-3. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: [complete]
-Final human conclusion and comparison with initial hypothesis: [complete]
+Actual prompt / output reference and member: 
+
+Hong Ruan — GitHub Copilot Chat. https://github.com/copilot/share/c8565392-4024-80e0-a851-6c4f40a149ba
+
+1. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: 
+
+Suggestion: Cancelled appointments are filtered out
+
+Evidence check: Check find_appointment() in data_store.py.
+
+Observed evidence: The code uses != "cancelled" to filter appointment records.
+
+Evaluation: Correct.
+
+Decision: Accept. This explains why cancelled appointments cannot be found.
+
+2. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: 
+
+Suggestion: The service raises LookupError
+
+Evidence check: Check find_appointment() and cancel_appointment() in services.py.
+
+Observed evidence: The service raises LookupError when the data store returns None.
+
+Evaluation: Correct.
+
+Decision: Accept. It is not the direct cause, but it is related to the problem.
+
+3. Ranked suggestion / evidence check / observed evidence / correct, partly correct or wrong / accept, modify or reject with reason: 
+
+Suggestion: Appointment removed or different data store
+
+Evidence check: Check the appointment record after cancellation and the test setup.
+
+Observed evidence: The appointment status changes to CANCELLED. The record is still stored, and the test uses the same data store.
+
+Evaluation: Wrong.
+
+Decision: Reject. The appointment is not removed, and the same data store is used.
+
+Final human conclusion and comparison with initial hypothesis: 
+
+My initial hypothesis was that the system might not keep the cancelled appointment record. Based on Copilot's suggestions, I checked the code and found that find_appointment() does not return cancelled appointments. The record is still stored, but the function returns None.
+
+
 
 ## G. Failing to passing regression evidence
 
-| Checkpoint | Code SHA or precise diff | Command and working directory                                                                 | Actual result and artefact reference                                                              |
-|---|---|-----------------------------------------------------------------------------------------------|---------------------------------------------------------------------------------------------------|
-| F8-01 before repair | 6b88467ccba08e66319d783b7440615859862223 | python3 -m pytest tests/test_regressions.py -vv -s                                            | result: 2 failed in 0.03s artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/18 |
-| F8-01 after repair | [complete] | []                                                                                            | []                                                                                                |
-| F8-02 before repair | [complete] | python3 -m pytest tests/test_regressions.py::test_f8_02_cancelled_appointment_retained -vv -s | result: 1 failed in 0.03s artefact reference:                                                     |
-| F8-02 after repair | [complete] | [complete]                                                                                    | [complete]                                                                                        |
-| Full suite after both repairs, before refactor | [complete] | [complete]                                                                                    | [complete]                                                                                        |
+| Checkpoint | Code SHA or precise diff                 | Command and working directory                                                                 | Actual result and artefact reference                                                                             |
+|---|------------------------------------------|-----------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------|
+| F8-01 before repair | 6b88467ccba08e66319d783b7440615859862223 | python3 -m pytest tests/test_regressions.py -vv -s  (project/)                                          | result: 2 failed in 0.03s artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/18                |
+| F8-01 after repair | 679d99f8681882fc0fa69c2bc11f41c89bd04c10                                       | python3 -m pytest tests/test_regressions.py -k f8_01 -vv -s   (project/)                                                                                         | result: 2 passed, 1 deselected in 0.01s. artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/18 |
+| F8-02 before repair | 64ef1947090b0c5ab88a21053bb166b4b2f8f803 | python3 -m pytest tests/test_regressions.py::test_f8_02_cancelled_appointment_retained -vv -s (project/)| result: 1 failed in 0.03s artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/19                |
+| F8-02 after repair | 3732390fe607a309acb7426d24dbb62605ed9f7d                              | python3 -m pytest tests/test_regressions.py::test_f8_02_cancelled_appointment_retained -vv -s  (project/)                                                                                 | result: 1 passed in 0.01s.  artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/19                                                                    |
+| Full suite after both repairs, before refactor | 3732390fe607a309acb7426d24dbb62605ed9f7d                              | python3 -m pytest -vv -s (project/)                                                                                   | result: 75 passed in 0.03s.  artefact reference: https://github.com/Saphal-uc/Assignment-3/issues/19                                                                                                       |
 
-Explain how the assertions detect each relevant incorrect result and protect previous behaviour: [complete]
-Unrelated failures investigated / resolution: [complete or not applicable with reason]
+Explain how the assertions detect each relevant incorrect result and protect previous behaviour: 
+
+F8-01: I wrote two new regression tests. One checks the booking conflict for the same practitioner at the same time. The other checks if different practitioners can have appointments at the same time.
+
+F8-02: I wrote one new regression test. It checks if the appointment status changes to CANCELLED. Also, it checks if the record is still stored and can be found using its ID.
+
+Existing tests: I also ran all the existing tests to make sure my fixes did not break other functions. After fixing both bugs, all 75 tests passed.
+
+Unrelated failures investigated / resolution: 
+
+Not applicable. There were no unrelated failures. All the failed tests were related to F8-01 and F8-02. After fixing both bugs, all 75 tests passed.
 
 ## H. Refactoring decision and before/after verification
 
