@@ -69,10 +69,27 @@ Traceback — exception/assertion; expected/observed values; test line; call pat
 
 ## C. F8-01 diagnosis and repair
 
-- Symptom / observed behaviour: [complete]
-- Expected behaviour and requirement: [complete]
-- Minimal synthetic reproduction steps: [complete]
-- Meaningful failing test path/name and exact relevant failure: [complete]
+- Symptom / observed behaviour:
+
+The system did not reject a conflicting appointment booking. Two existing tests failed with DID NOT RAISE ValueError.
+- Expected behaviour and requirement: 
+
+The system should reject a new booking if the same practitioner already has an appointment at the same time. It should only allow different practitioners to have appointments at the same time.
+- Minimal synthetic reproduction steps: 
+1. Register two patients and one practitioner.
+2. Book A1 for Patient 1 with the practitioner at a specific time.
+3. Try to book A2 for Patient 2 with the same practitioner at the same time.
+4. Check whether A2 is rejected. 
+- Meaningful failing test path/name and exact relevant failure: 
+
+File: test_starter.py 
+
+test_conflict_rule_and_different_practitioner: Failed (DID NOT RAISE ValueError.)
+
+File: tests/test_services.py
+
+test_rejected_booking_conflict_preserves_existing_appointment: Failed (DID NOT RAISE ValueError.)
+
 - Human hypothesis and intended checks: see E, F8-01.
 - Supported root cause and inspected code/runtime evidence: [complete after diagnosis]
 - Smallest justified fix / diff / why other behaviour is preserved: [complete]
@@ -94,8 +111,21 @@ Traceback — exception/assertion; expected/observed values; test line; call pat
 Complete both entries BEFORE Copilot. C/D supply observed/expected/reproduction/test; retain those initial facts and link them here.
 
 ### F8-01 human entry
-Likely cause and why plausible: [complete]
-Evidence intended to inspect / competing explanation / discriminating check: [complete]
+Likely cause and why plausible: 
+
+The system could not actually detect the conflict, so it did not raise a ValueError.
+
+Evidence to inspect: 
+
+Check the code related to detecting duplicate bookings in the appointment booking service.
+Competing explanation: 
+
+There may be an error in the code for creating appointments without checking for existing appointments.
+
+Discriminating check: 
+
+Check whether the system performs a duplicate booking check when creating an appointment. If it does, check whether the logic is correct.
+
 Member and saved sequence/time or commit showing this preceded consultation: [complete]
 
 ### F8-02 human entry
@@ -125,7 +155,7 @@ Final human conclusion and comparison with initial hypothesis: [complete]
 
 | Checkpoint | Code SHA or precise diff | Command and working directory | Actual result and artefact reference |
 |---|---|---|---|
-| F8-01 before repair | [complete] | [complete] | [complete] |
+| F8-01 before repair | [complete] | python3 -m pytest tests/test_regressions.py -vv -s | 2 failed in 0.03s |
 | F8-01 after repair | [complete] | [complete] | [complete] |
 | F8-02 before repair | [complete] | [complete] | [complete] |
 | F8-02 after repair | [complete] | [complete] | [complete] |
