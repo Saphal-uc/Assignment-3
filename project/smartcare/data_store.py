@@ -89,10 +89,8 @@ class SmartCareDataStore:
     def find_appointment(self, appointment_id: str) -> Appointment | None:
         if not isinstance(appointment_id, str) or not appointment_id.strip():
             raise ValueError("Appointment ID cannot be blank")
-        for appointment in self.list_appointments():
-            if appointment.appointment_id == appointment_id.strip():
-                return appointment
-        return None
+
+        return self._appointments.get(appointment_id.strip())
 
     def list_appointments(self) -> list[Appointment]:
         """Return a new list containing all stored appointment objects."""
