@@ -361,3 +361,201 @@ def test_rejected_booking_conflict_preserves_existing_appointment(cancellation_s
     # Assert: rejected appointment was not stored.
     assert len(store.list_appointments()) == original_count
     assert store.find_appointment("A2") is None
+
+@pytest.fixture
+def listing_setup():
+    """Create practitioners and appointments for listing tests."""
+    store = SmartCareDataStore()
+
+    patient_service = PatientService(store)
+    practitioner_service = PractitionerService(store)
+
+    patient = patient_service.register_patient("P1", "Alex Example")
+
+    practitioner = practitioner_service.register_practitioner(
+        "D1", "Taylor Example", "General"
+    )
+
+    other_practitioner = practitioner_service.register_practitioner(
+        "D2", "Jordan Example", "Dental"
+    )
+
+    service = AppointmentService(store)
+
+    scheduled = Appointment(
+        "A1",
+        patient,
+        practitioner,
+        datetime(2026, 10, 26, 9, 0),
+        AppointmentStatus.SCHEDULED,
+    )
+
+    cancelled = Appointment(
+        "A2",
+        patient,
+        practitioner,
+        datetime(2026, 10, 26, 10, 0),
+        AppointmentStatus.CANCELLED,
+    )
+
+    completed = Appointment(
+        "A3",
+        patient,
+        practitioner,
+        datetime(2026, 10, 26, 11, 0),
+        AppointmentStatus.COMPLETED,
+    )
+
+    other_appointment = Appointment(
+        "A4",
+        patient,
+        other_practitioner,
+        datetime(2026, 10, 26, 12, 0),
+        AppointmentStatus.SCHEDULED,
+    )
+
+    for appointment in (
+        scheduled,
+        cancelled,
+        completed,
+        other_appointment,
+    ):
+        store.add_appointment(appointment)
+
+    return (
+        store,
+        service,
+        practitioner,
+        scheduled,
+        cancelled,
+        completed,
+        other_appointment,
+    )
+
+
+def test_list_practitioner_appointments_returns_all_statuses(listing_setup):
+    """Default listing includes every appointment status."""
+    store, service, practitioner, scheduled, cancelled, completed, _ = (
+        listing_setup
+    )
+
+    result = service.list_practitioner_appointments(
+        practitioner.practitioner_id
+    )
+
+    assert result == [scheduled, cancelled, completed]
+    assert result[0] is scheduled
+    assert result[1] is cancelled
+    assert result[2] is completed
+    assert cancelled.status is AppointmentStatus.CANCELLED
+    assert store.find_appointment("A2") is cancelled
+
+
+def test_list_practitioner_appointments_filters_scheduled(listing_setup):
+    """Return only scheduled appointments."""
+    _, service, practitioner, scheduled, _, _, _ = listing_setup
+
+    result = service.list_practitioner_appointments(
+        practitioner.practitioner_id,
+        AppointmentStatus.SCHEDULED,
+    )
+
+    assert result == [scheduled]
+
+
+def test_list_practitioner_appointments_filters_cancelled(listing_setup):
+    """Return only cancelled appointments."""
+    _, service, practitioner, _, cancelled, _, _ = listing_setup
+
+    result = service.list_practitioner_appointments(
+        practitioner.practitioner_id,
+        AppointmentStatus.CANCELLED,
+    )
+
+    assert result == [cancelled]
+
+
+def test_list_practitioner_appointments_filters_completed(listing_setup):
+    """Return only completed appointments."""
+    _, service, practitioner, _, _, completed, _ = listing_setup
+
+    result = service.list_practitioner_appointments(
+        practitioner.practitioner_id,
+        AppointmentStatus.COMPLETED,
+    )
+
+    assert result == [completed]
+
+
+def test_list_practitioner_appointments_unknown_id_raises_lookup_error(
+    listing_setup,
+):
+    """Raise LookupError for an unknown practitioner."""
+    _, service, *_ = listing_setup
+
+    with pytest.raises(LookupError):
+        service.list_practitioner_appointments("D99")
+
+
+@pytest.mark.parametrize("practitioner_id", ["", "   ", None])
+def test_list_practitioner_appointments_invalid_id_raises_value_error(
+    listing_setup, practitioner_id
+):
+    """Reject blank or invalid practitioner IDs."""
+    _, service, *_ = listing_setup
+
+    with pytest.raises(ValueError):
+        service.list_practitioner_appointments(practitioner_id)
+
+
+def test_list_practitioner_appointments_invalid_status_raises_value_error(
+    listing_setup,
+):
+    """Reject a status string instead of an enum value."""
+    _, service, *_ = listing_setup
+
+    with pytest.raises(ValueError):
+        service.list_practitioner_appointments("D1", "scheduled")
+
+
+def test_list_practitioner_appointments_trims_practitioner_id(listing_setup):
+    """Accept a practitioner ID with surrounding spaces."""
+    _, service, practitioner, scheduled, cancelled, completed, _ = (
+        listing_setup
+    )
+
+    result = service.list_practitioner_appointments(" D1 ")
+
+    assert result == [scheduled, cancelled, completed]
+
+
+def test_list_practitioner_appointments_returns_empty_list_for_no_matches(
+    listing_setup,
+):
+    """Return an empty list when there are no matching appointments."""
+    _, service, *_ = listing_setup
+
+    result = service.list_practitioner_appointments(
+        "D2",
+        AppointmentStatus.CANCELLED,
+    )
+
+    assert result == []
+
+
+def test_list_practitioner_appointments_does_not_change_records(listing_setup):
+    """Listing does not modify stored appointments or their order."""
+    store, service, practitioner, *_ = listing_setup
+
+    before = store.list_appointments()
+    original_statuses = [appointment.status for appointment in before]
+
+    service.list_practitioner_appointments(practitioner.practitioner_id)
+
+    after = store.list_appointments()
+
+    assert after == before
+    assert all(
+        actual is expected for actual, expected in zip(after, before)
+    )
+    assert [appointment.status for appointment in after] == original_statuses
