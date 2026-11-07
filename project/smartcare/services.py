@@ -9,6 +9,7 @@ from smartcare.domain import (
     Patient,
     Practitioner,
 )
+from smartcare.queries import select_appointments
 
 
 class PatientService:
@@ -165,4 +166,21 @@ class AppointmentService:
         ValueError; a known practitioner with no matches returns an
         empty list.
         """
-        raise NotImplementedError('Stage 9: practitioner appointments')
+        if not isinstance(practitioner_id, str) or not practitioner_id.strip():
+            raise ValueError('Practitioner ID must be a non-blank string')
+
+        practitioner = self.data_store.find_practitioner(practitioner_id)
+
+        if practitioner is None:
+            raise LookupError('Practitioner not found')
+
+        if status is not None and not isinstance(status, AppointmentStatus):
+            raise ValueError('Invalid appointment status')
+
+        appointments = self.data_store.list_appointments()
+
+        return select_appointments(
+            appointments,
+            practitioner.practitioner_id,
+            status,
+        )
