@@ -80,10 +80,15 @@ What the tests do and do not establish: <!-- response -->
 |---|---|---|---|---|
 | UI-01 full menu workflow | | | | |
 | UI-02 invalid-input recovery | | | | |
-| Automated service workflow | | | | |
+| Automated service workflow — booking conflict | Book A1 for P1 with D1 at 09:00. Try A2 with D1 at the same time, then retry A2 with D2. | Reject the conflict, keep A1 unchanged, and allow the retry with D2. | Passed. The conflict raised ValueError. A1 kept its original patient, practitioner, time and scheduled status. A2 was not stored until the successful retry. | [Workflow tests](../project/tests/test_workflows.py) |
+| Automated service workflow — cancellation and history | Cancel A1. Try to reuse ID A1, then book A2 with the same practitioner at the freed time. | Keep A1 available as cancelled, reject reuse of its ID, and allow A2 to use the slot. | Passed. Lookup returned the same cancelled A1. Reusing its ID raised ValueError. A2 was scheduled, and both records remained stored. | [Workflow tests](../project/tests/test_workflows.py) |
+| Automated service workflow — unknown patient and retry | Register D1. Try to book A1 for unregistered patient P1. Register P1 and retry with the same ID, practitioner and time. | The first booking raises `LookupError` and stores nothing. The retry succeeds. | Passed. P1 remained unregistered and the appointment list stayed empty after rejection. After registration, lookup returned the same A1 with the correct patient, practitioner, time and `SCHEDULED` status. | [Workflow tests](../project/tests/test_workflows.py) |
+
 
 Include registration/find, booking, conflict rejection, different-practitioner booking, cancellation, retrieval, listing/filtering, freed slot and exit; duplicate/unknown/blank IDs, malformed/impossible date, invalid status, unknown choice and repeated cancellation. Identify before/after state and subsequent successful action.
-
+- Working directory: `project/`
+- Focused run: `python -m pytest -v tests/test_workflows.py` — 3 passed in 0.06s.
+- Full suite: `python -m pytest -q` — 78 passed in 0.13s.
 ## E. GitHub Copilot review and human decisions
 
 Human design completed before AI: <!-- reference -->
