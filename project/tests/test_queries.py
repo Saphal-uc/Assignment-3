@@ -208,3 +208,35 @@ def test_select_appointments_does_not_change_appointment_objects(
     ]
 
     assert after == original
+
+def test_select_appointments_repeated_calls_return_consistent_results(
+    query_setup,
+):
+    """Repeated calls return consistent results without changing the source."""
+
+    original = list(query_setup)
+
+    first_result = select_appointments(query_setup, "D1")
+    second_result = select_appointments(query_setup, "D1")
+
+    assert first_result == second_result
+    assert first_result is not second_result
+    assert query_setup == original
+
+def test_select_appointments_already_sorted_input(query_setup):
+    """Keep appointments in chronological order when input is already sorted."""
+
+    already_sorted = [
+        query_setup[1],  # 09:00
+        query_setup[0],  # 10:00
+        query_setup[3],  # 11:00
+        query_setup[4],  # 12:00
+    ]
+
+    original = list(already_sorted)
+
+    result = select_appointments(already_sorted, "D1")
+
+    assert result == already_sorted
+    assert result is not already_sorted
+    assert already_sorted == original
