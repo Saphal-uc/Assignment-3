@@ -4,8 +4,9 @@ PG-only stage. Undergraduate students are not required to complete this record. 
 
 Blank student template. All Assignment 3 stage materials are provided from the beginning. Complete this stage only after the previous applicable stage has been integrated, verified and recorded. Use this supplied file in stage11_pg/ in your EXISTING repository. Preserve project/, earlier records/tests and the protected common Stage 9 SHA. Do not copy staff references or fabricate AI evidence.
 
-Group/tutorial: [response]
-Assessed PG members and contributions: [response]
+Group/tutorial: Group 4, Thursday 2:30.
+
+Assessed PG members and contributions: Saphal Bhattarai completed the Stage 11 assurance work, ran the tests and recorded the findings. Chloe independently reviewed both new tests against Section D and approved the pull request without requesting changes.
 Optional UG contributors: [response or none]
 
 ## A Handover and human-first scope
@@ -16,7 +17,7 @@ Recoverable branch / baseline / actual commands, working directory and results: 
 Domain, store, services, queries, console, entry point, tests and rescheduling inspected: [I manually inspected `project/smartcare/domain.py`, `data_store.py`, `services.py`, `queries.py`, `console.py`, `project/main.py`, `tests/test_rescheduling.py` and `tests/test_workflows.py`. Domain rules validate identifiers, date/time values and status transitions. The store retains appointments and checks conflicts using scheduled appointments. Services coordinate booking, cancellation, rescheduling and listing. Queries return a sorted new list. The console handles expected input errors, and the existing tests check successful behaviour and state preservation after rejected operations.]
 Selected PG feature and common workflow / requirements / code locations: [The selected PG feature is appointment rescheduling. The common workflow is appointment cancellation with retained history and reuse of the freed time slot. The required behaviour is that only scheduled appointments can be rescheduled or cancelled, practitioner conflicts are rejected, failed operations leave stored records unchanged, cancelled appointments remain available in history and their time slots can be reused with a new appointment ID. Relevant code locations are `project/smartcare/domain.py`, `project/smartcare/data_store.py`, `project/smartcare/services.py`, `project/tests/test_rescheduling.py`, `project/tests/test_workflows.py` and `project/tests/test_assurance.py`.]
 Actual available earlier AI, issue, PR and dependency evidence: [Stage 10 evidence is recorded in `stage10_pg/stage10_activities_and_evidence.md`, Issue #33 and Pull Request #34. The evidence records Copilot planning, human supervision, independent review by Saphal, 33 rescheduling tests passed, 106 protected common tests passed and 139 cumulative tests passed. Stage 10 was integrated at SHA `9a4ea9e222bc522f557689bac631b364384fa53b`. Pull Request #35 contains later handover documentation. No new runtime dependency was added; `pytest 8.3.5` is used as the test tool.]
-Missing evidence / honest limitation: [response]
+Missing evidence / honest limitation: The Copilot transcript records the code review, but it does not verify student entitlement, institutional approval for agent editing, or a separate Overview/revision 2 source. The 141 passing tests recorded before the merge are not evidence of a post-merge retest.
 Assets and trust boundaries: [The protected assets are the SmartCare source code, appointment records, patient and practitioner records, tests, repository history and assessment evidence. Input crosses the trust boundary when data enters through the console and service methods before reaching the domain objects and shared data store. Invalid identifiers, date/time values, status values and conflicting bookings must be rejected. Real patient information, passwords, API keys, access tokens and other private data must not be entered into Copilot. Only synthetic records such as P1, D1 and A1 will be used.]
 Scope, assumptions, exclusions and initial observations made BEFORE Copilot:
 
@@ -24,10 +25,12 @@ Scope, assumptions, exclusions and initial observations made BEFORE Copilot:
 - **Assumption:** The review uses synthetic appointments in the same in-memory SmartCare session. It does not assess whether records survive after the program closes.
 - **Exclusions:** Adding new features, changing the console menu and replacing the data store are outside this review.
 - **Initial observation from the baseline:** Before adding Stage 11 tests, the full suite passed all 139 tests, and the protected common suite passed all 106 tests. These runs show that the existing tests passed. The counts alone do not show whether a rejected reschedule leaves both appointments unchanged.
-Confirmed Copilot mode / student entitlement / permissions / approval reference: [response]
-Plan-only → human approval → bounded editing check / approved equivalent route: [response]
-Overview/revision 2 availability / source: [response]
-Assigned PG owner / independent reviewer: [response]
+Confirmed Copilot mode / student entitlement / permissions / approval reference: VS Code showed `Agent`, `Local` and `Default permissions`. The mode menu did not show a separate `Plan` option. The screenshot confirms the local settings only; it does not establish student entitlement or institutional approval.
+
+Plan-only → human approval → bounded editing check / approved equivalent route: The [Copilot review transcript](copilot_review.md) records a request to review pasted code without editing files, running commands or installing packages. Copilot returned written findings. This demonstrates a review-only exchange; an agent editing workflow was not tested.
+
+Overview/revision 2 availability / source: The Stage 11 PG Assurance handout refers to Overview/revision 2. A separate copy or course link has not been verified in this record.
+Assigned PG owner / independent reviewer: Saphal Bhattarai was the Stage 11 PG owner. Chloe was the independent reviewer. She approved the changes before they were merged into `main` at `7e34997`.
 
 ## B Original tutorial activities
 
@@ -189,8 +192,9 @@ Policy questions or unresolved provenance / responsible contact: The VS Code men
 
 ## I Independent review and final audit statement
 
-Human reviewer / PR or diff link / feedback: [response]
-Corrections and recheck / approval before integration: [response]
+Human reviewer / PR or diff link / feedback: Chloe approved the Stage 11 PR after comparing both assurance tests with Section D. She confirmed that the lookup test checks that store B stays empty after a failed search and that each store later returns its own P1. She also confirmed that the appointment test checks retained history after slot reuse and queries the service again after clearing the returned list. [PR review](PASTE_REVIEW_URL_HERE)
+
+Corrections and recheck / approval before integration: Chloe requested no changes. Her approval was recorded before the PR was merged into `main` at `7e34997`. No corrective code change was required.
 Overall decision: [Acceptable / Acceptable with remediation / Not yet acceptable] [response]
 Unresolved risks: [response]
 Evidence supporting decision: Before independent review, both new assurance tests passed locally. The previous PG suite passed 139 tests, the protected common suite passed 106, and the full suite passed 141. The comparison with baseline `13362ac` showed no changes to existing production files or earlier tests. No production correction was needed for the two scenarios tested. These results are local; the integrated retest has not yet been run.
