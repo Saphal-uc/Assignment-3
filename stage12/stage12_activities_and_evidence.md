@@ -2,41 +2,60 @@
 
 BLANK student response template. Supplied from the beginning in stage12/ in your EXISTING repository; complete it only when you reach Stage 12 after the previous applicable stage is integrated, verified and recorded; preserve project/, tests, earlier records and Git history. UG/common and PG/extended scope must be explicit. Use concise results and versioned links, not copied logs or source. No staff answers or fabricated approvals.
 
-Group/tutorial: [response]
-Members and UG/PG applicability: [response]
+Group/tutorial: SmartCare – Software Technology 1, Assignment 3.
+Members and UG/PG applicability:
+- Srilakshmi – UG
+- Ujwal – UG
+- Chloe – PG
+- Saphal – PG
+Group scope: Mixed UG/PG group. UG members follow Stages 6–9 and 12. PG members follow Stages 6–12, including the Stage 10 and 11 extensions.
 
 
 ## A Release scope and starting SHA
 
-Release label/version and requirements baseline: [response]
-Common starting SHA / branch / applicable members: [response]
-PG starting SHA / branch / applicable members or not applicable: [response]
-Working-state review and approved integration: [response]
-Protected common candidate and PG differences: [response]
-Feature freeze / owner / verifier: [response]
+Release label/version and requirements baseline: The project is SmartCare, and the proposed release label is v1.0. The release follows the Undergraduate (UG) requirements baseline and includes Stages 6, 7, 8, 9 and 12. The release scope covers patient and practitioner management, appointment booking, cancellation, appointment history, practitioner appointment listing and the related testing and documentation.
+Common starting SHA / branch / applicable members: Branch: main
+
+
+
+Current SHA: 7e349978947726dd44a49fa50a167b097459ccba
+
+
+
+Repository: https://github.com/Saphal-uc/Assignment-3
+
+
+
+Applicable members: All UG group members.
+PG starting SHA / branch / applicable members or not applicable: Not applicable. This project follows the Undergraduate pathway.
+Working-state review and approved integration: The local main branch is up to date with origin/main, and the working tree is clean. The automated test suite completed with 141 passed, 0 failed and 0 errors. Final PR integration approval is not confirmed in the available evidence.
+Protected common candidate and PG differences: The common UG release candidate will use the verified main branch. The final release SHA must be recorded before submission. PG-specific requirements are not applicable.
+Feature freeze / owner / verifier: A feature freeze will be applied before final release testing. No new features will be added after the freeze. The team will focus on bug fixes, regression testing and documentation.
+- Owner: Saphal
 
 
 ## B Requirements and release readiness matrix
 
-Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: [response]
+Tutorial activity 1: All tests pass, README setup is incomplete, one dependency is unreviewed and a known limitation is undocumented. Decide Release / Release with conditions / Do not release and justify: DO NOT RELEASE.
+
+Although all tests pass, the README setup instructions are incomplete, one dependency is unreviewed and a known limitation is undocumented. These issues must be addressed before release. The team should complete the README, review the dependency and document the known limitation.
 
 Tutorial activity 2 and actual readiness matrix. Add exact requirement/acceptance IDs, evidence and reviewer; distinguish common/PG applicability.
 
 | Release claim / requirement / scope | Evidence | Location/link and SHA | Reviewer | Sufficient? | Gap/action |
-|---|---|---|---|---|---|
-| Cancellation history works | [response] | [response] | [response] | [response] | [response] |
-| Architecture responsibilities are appropriate | [response] | [response] | [response] | [response] | [response] |
-| Rescheduling is safe — PG only | [response] | [response] | [response] | [response] | [response] |
-| AI use is responsible — common recheck / PG assurance | [response] | [response] | [response] | [response] | [response] |
-| System is maintainable | [response] | [response] | [response] | [response] | [response] |
-| FR-01–03 register/find and validation | [response] | [response] | [response] | [response] | [response] |
-| FR-04–05 booking/conflict rules | [response] | [response] | [response] | [response] | [response] |
-| FR-06–08 cancellation/history/find | [response] | [response] | [response] | [response] | [response] |
-| FR-09 and QRY/FP listing/filter/order/purity | [response] | [response] | [response] | [response] | [response] |
-| UI full console sequence and error recovery | [response] | [response] | [response] | [response] | [response] |
-| Session-only scope / FR-10 retired | [response] | [response] | [response] | [response] | [response] |
-| PG RES and assurance integration | [response] | [response] | [response] | [response] | [response] |
-
+|---|---|---|--|---|---|
+| Cancellation history works | Automated tests for cancellation and retained appointment history passed. | [Regression tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_regressions.py) — SHA: `7e349978947726dd44a49fa50a167b097459ccba` | Chloe | Partially | Confirm final demonstration and review. |
+| Architecture responsibilities are appropriate | Code is organised into domain, data store, services and queries modules. | [SmartCare repository](https://github.com/Saphal-uc/Assignment-3) | everyone | Partially | Complete architecture review. |
+| Rescheduling is safe — PG only | Not applicable to UG pathway. | N/A | N/A | N/A | No action required. |
+| AI use is responsible — common recheck / PG assurance | AI usage acknowledgement and project documentation. | Project documentation and AI usage record. | To be confirmed | Partially | Verify common AI acknowledgement. PG assurance is not applicable. |
+| System is maintainable | Modular code structure and automated tests. | [SmartCare repository](https://github.com/Saphal-uc/Assignment-3) | To be confirmed | Partially | Complete maintainability review. |
+| FR-01–03 register/find and validation | Domain and service tests cover registration, lookup and validation. | [Domain tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_domain.py) and [Service tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_services.py) | everyone | Partially | Confirm all acceptance criteria. |
+| FR-04–05 booking/conflict rules | Booking and appointment conflict tests passed. | [Workflow tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_workflows.py) and [Regression tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_regressions.py) | everyone  | Partially | Confirm complete requirements coverage. |
+| FR-06–08 cancellation/history/find | Cancellation, history and lookup service tests passed. | [Service tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_services.py) | everyone  | Partially | Confirm all acceptance criteria and demonstration evidence. |
+| FR-09 and QRY/FP listing/filter/order/purity | Practitioner appointment listing, filtering, ordering and record-preservation tests passed. | [Query tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_queries.py), [Service tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_services.py), [Issue #32](https://github.com/Saphal-uc/Assignment-3/issues/32) — SHA: `7e349978947726dd44a49fa50a167b097459ccba` | To be confirmed | Partially | Confirm final integration and reviewer approval. |
+| UI full console sequence and error recovery | Workflow and starter tests provide automated evidence. | [Workflow tests](https://github.com/Saphal-uc/Assignment-3/blob/main/project/tests/test_workflows.py), [main.py](https://github.com/Saphal-uc/Assignment-3/blob/main/project/main.py) | everyone  | Partially | Add full console demonstration evidence. |
+| Session-only scope / FR-10 retired | Requirements baseline has not yet been verified. | Project requirements documentation. | everyone  | Not confirmed | Verify session-only behaviour and FR-10 retirement. |
+| PG RES and assurance integration | Not applicable to UG pathway. | N/A | N/A | N/A | No action required. |
 
 ## C Full regression results
 
@@ -199,25 +218,24 @@ Remaining administration or release dependency: [response]
 
 ## M Formative questions
 
-1. What is a release candidate? [response]
+1. What is a release candidate? A release candidate is a version of software that is almost ready for release and is undergoing final testing.
 
-2. What is feature freeze and why is it used? [response]
+2. What is feature freeze and why is it used? A feature freeze means no new features are added. The team focuses on testing, fixing bugs and preparing the release.
 
-3. What is regression testing in a release context? [response]
+3. What is regression testing in a release context? Regression testing checks that existing features still work correctly after changes or bug fixes.
 
-4. What is a known limitation? [response]
+4. What is a known limitation? A known limitation is an issue or restriction in the software that the team is aware of but has not fully resolved.
 
-5. What is technical debt? [response]
+5. What is technical debt? Technical debt refers to shortcuts or temporary solutions in the code that may cause extra work in the future.
 
-6. What are release notes? [response]
+6. What are release notes? Release notes describe the changes, new features, bug fixes and known limitations included in a software release.
+7. What is software maintenance? Software maintenance involves updating, fixing and improving software after its release to keep it reliable and useful.
 
-7. What is software maintenance? [response]
+8. What is the purpose of the individual demonstration/viva? The individual demonstration or viva checks each student's understanding of the project and their own contribution.
 
-8. What is the purpose of the individual demonstration/viva? [response]
+9. What should the final responsible-AI check establish before release? It should establish that AI-generated suggestions have been checked, the team understands the code, and AI use has been acknowledged where required.
 
-9. What should the final responsible-AI check establish before release? [response]
-
-10. What is the main course conclusion about AI and the role of the software engineer? [response]
+10. What is the main course conclusion about AI and the role of the software engineer? AI can support software development, but software engineers are responsible for understanding, checking, testing and taking responsibility for the final software.
 
 
 ## N Reflection viva and handover
