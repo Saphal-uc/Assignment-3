@@ -4,9 +4,39 @@ UG and PG | One evolving group project | Complete this blank record using the St
 
 All Assignment 3 stage materials are provided from the beginning. Complete this stage only after the previous applicable stage has been integrated, verified and recorded. Use this supplied record in stage08/ in your EXISTING repository. Preserve project/, all earlier tests, records and responses. Do not download another starter or copy staff solutions. The Stage 8 preparation utility is supplied or run by teaching staff when Stage 8 begins. Follow your tutor’s controlled workflow and the handout. If temporarily supplied, keep it outside the repository in a sibling Stage_8_Assets/ folder; exclude it from Git and the final submission.
 
-Group/tutorial: [complete]
-Members and UG/PG cohorts: [complete]
-Record owner / contribution links for each member: [complete]
+Group/tutorial: Thu 2:30 PM, Group 4
+
+Members and UG/PG cohorts: 
+
+Ujwal B K - UG
+
+Srilakshmi Ravipati - UG
+
+Hong Ruan - PG
+
+Saphal Bhattarai - PG
+
+Record owner / contribution links for each member: 
+
+- Hong Ruan
+
+Contribution: F8-01 and F8-02 debugging, regression tests, bug fixes, and related documentation.
+
+Evidence: Issue #18, Issue #19, Commit a35280b
+
+- Srilakshmi Ravipati
+
+Contribution: Stage 8 code refactoring.
+
+Evidence: PR #20
+
+- Ujwal
+
+Contribution: Stage 8 activities and evidence documentation.
+
+Evidence: PR #21
+
+ 
 
 Use concise results and accessible artefact links rather than copying entire logs. Keep human-first entries before consulting GitHub Copilot. Link shared evidence once; do not repeat it across sections. No entries below are specimen answers or claimed results.
 
