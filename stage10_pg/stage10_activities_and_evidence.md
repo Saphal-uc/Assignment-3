@@ -189,6 +189,6 @@ Optional UG help, acknowledged separately: [response or none]
 - [ ] README PG note, actual integrated SHA and limitations recorded.
 
 Unresolved issues / owner / action: [response]
-Stage 11 handover references to extension, tests, dependencies and actual AI/review evidence: [response]
+Stage 11 handover references to extension, tests, dependencies and actual AI/review evidence: [Saphal tested the merged code from [PR #34](https://github.com/Saphal-uc/Assignment-3/pull/34) at commit `9a4ea9e222bc522f557689bac631b364384fa53b`. From `project/`, `python -m pytest -q` passed all 139 tests, and `python -m pytest -q --ignore=tests/test_rescheduling.py` passed all 106 common tests.]
 Submitted SHA / explanation if later than tested code: [response]
 Stage 11 materials are supplied from the beginning. Begin Stage 11 only after Stage 10 has been integrated, verified and recorded. UG follows the protected common code from Stage 9 to Stage 12.
