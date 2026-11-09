@@ -26,10 +26,10 @@ Repository: https://github.com/Saphal-uc/Assignment-3
 
 
 
-Applicable members: All UG group members.
-PG starting SHA / branch / applicable members or not applicable: Not applicable. This project follows the Undergraduate pathway.
+Applicable members: All UG and PG group members.
+PG starting SHA / branch / applicable members or not applicable: PG starting SHA / branch / applicable members or not applicable: PG members are Chloe and Saphal. The PG features from Stages 10 and 11 were integrated into main. Tested SHA: 7e349978947726dd44a49fa50a167b097459ccba.
 Working-state review and approved integration: The local main branch is up to date with origin/main, and the working tree is clean. The automated test suite completed with 141 passed, 0 failed and 0 errors. Final PR integration approval is not confirmed in the available evidence.
-Protected common candidate and PG differences: The common UG release candidate will use the verified main branch. The final release SHA must be recorded before submission. PG-specific requirements are not applicable.
+Protected common candidate and PG differences: Protected common candidate and PG differences: The common features apply to both UG and PG members. PG members also completed rescheduling and assurance tests in Stages 10 and 11. All 141 tests passed at SHA 7e349978947726dd44a49fa50a167b097459ccba.
 Feature freeze / owner / verifier: A feature freeze will be applied before final release testing. No new features will be added after the freeze. The team will focus on bug fixes, regression testing and documentation.
 - Owner: Saphal
 
