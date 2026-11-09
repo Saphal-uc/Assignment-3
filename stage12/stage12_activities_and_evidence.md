@@ -98,20 +98,20 @@ Available AI evidence and missing evidence honestly disclosed: [response]
 
 ## F README and reproducibility check
 
-| README item | Location | Verifier | Result/gap |
-|---|---|---|---|
-| Purpose and included common/PG scope | [response] | [response] | [response] |
-| Out-of-scope capabilities and known limitations | [response] | [response] | [response] |
-| Confirmed teaching Python version and dependency installation | [response] | [response] | [response] |
-| Working directory / demo / interactive / test commands | [response] | [response] | [response] |
-| Repository structure and architecture responsibilities | [response] | [response] | [response] |
-| Responsible AI summary / synthetic-data rule | [response] | [response] | [response] |
-| Release label/version and SHA links | [response] | [response] | [response] |
-Root README index and project/README verified: [response]
-Fresh clone or extracted ZIP / candidate identity: [response]
-Verifier and clean environment / actual version: [response]
-Setup/run/test commands and observed results: [response]
-Missing local file or setup gap / remedy and recheck: [response]
+| README item | Location | Verifier      | Result/gap |
+|---|----|---------------|---|
+| Purpose and included common/PG scope | [project/READ.md,Section 1-2] | [UjwakBK1998] | [Purpose and common functionality documented. PG rescheduling functionality also documented.] |
+| Out-of-scope capabilities and known limitations | [project/README.md, Section 9] | [UjwalBk1998] | [Session-only storage, synthetic-data requirement and production limitations documented.] |
+| Confirmed teaching Python version and dependency installation | [project/README.md, Section 3–4] | [UjwalBK1998] | [Python 3.14.3 and pytest 8.3.5 verified locally. Teaching-approved Python version still needs confirmation.] |
+| Working directory / demo / interactive / test commands | [project/README.md, Sections 4–6] | [UjwalBK1998] | [Setup, normal run, interactive run and test commands documented and tested.] |
+| Repository structure and architecture responsibilities | [project/README.md, Sections 7–8] | [UjwalBk1998] | [Project structure and responsibilities of the main modules documented.] |
+| Responsible AI summary / synthetic-data rule | [project/README.md, Sections 9–10] | [UjwalBk1998] | [Human review of AI-generated suggestions and synthetic-data requirement documented.] |
+| Release label/version and SHA links | [project/README.md, Section 11; root README.md] | [UjwalBk1998] | [Final release label and SHA still need to be added after integration and release verification.] |
+Root README index and project/README verified: [project/README.md reviewed for setup, features, architecture, testing commands, responsible AI use and known limitations. Root README index still requires final group details, verified code SHA and submitted SHA.]
+Fresh clone or extracted ZIP / candidate identity: [Pending. Fresh clone or extracted release ZIP verification has not yet been completed. Candidate SHA to be recorded after final integration.]
+Verifier and clean environment / actual version: [Member 4 (UG) performed local verification using Python 3.14.3 and pytest 8.3.5 in the project virtual environment. Independent clean-environment verification is still pending.]
+Setup/run/test commands and observed results: [From project/: python -m pip install -r requirements-dev.txt; python main.py; python main.py --interactive; python -m pytest -q. Normal application launch and interactive menu were verified. Automated tests: 139 passed in 0.11 seconds. Results are from the local environment and must be associated with the final tested SHA.]
+Missing local file or setup gap / remedy and recheck: [The root README still contains starter information and incomplete group-index placeholders. Update the introduction and complete the group index after final integration. Confirm the approved teaching Python version and perform a fresh-copy setup and regression test before release.]
 
 
 ## G Known limitations debt and release notes
@@ -143,58 +143,65 @@ Release blockers still open / status: [response]
 
 ## I Git review and integration evidence
 
-Issue / PR / diff links and reviewed SHA: [response]
-Independent reviewer / feedback / response: [response]
-Integration commit / full recheck: [response]
-Tracked and untracked file inspection / cleanliness: [response]
-Secrets/staff material/caches/tool-metadata exclusion check: [response]
-Candidate recovery plan / known-good SHA: [response]
-Named substantive contributions: [response]
+Issue / PR / diff links and reviewed SHA: [GitHub Issues and Pull Requests from Stages 7–9 were used to track implementation and testing contributions. Relevant PRs include the Stage 9 query implementation and test changes. Add the actual PR links and reviewed commit SHA before final submission.]
+Independent reviewer / feedback / response: [Group members reviewed each other's pull requests and provided feedback on implementation scope and missing tests. For example, feedback on PR #31 identified that test_queries.py was missing. The query tests were requested and added before considering the work complete.]
+Integration commit / full recheck: [Stage 9 changes were integrated into the main branch through reviewed and merged pull requests. The integrated project was tested using python -m pytest -q, with 139 tests passing in the local environment. Record the exact integration commit SHA and final recheck result.]
+Tracked and untracked file inspection / cleanliness: [Git status and diff checks were used to inspect repository changes. git diff --check returned no whitespace errors. The working tree still contained a modified project/README.md during documentation work; final cleanliness must be verified after committing all approved changes.]
+Secrets/staff material/caches/tool-metadata exclusion check: [The repository and proposed submission package must be checked for credentials, real patient information, private staff materials, virtual environments, Python caches, pytest caches and temporary files. Final ZIP exclusion verification is pending.]
+Candidate recovery plan / known-good SHA: [The team will preserve the last verified integrated commit on main as the recovery point. If a release candidate fails verification, the team can return to that known-good SHA and correct the issue on a separate branch. Record the actual recovery SHA before submission.]
+Named substantive contributions: [Member 4 (UG): Stage 7 patient lookup and appointment conflict testing; Stage 9 query-related work and testing; Stage 12 README documentation, Git integration review, release verification and submission-package checks.]
 
 
 ## J Human release decision
 
-Decision — READY FOR COURSE RELEASE / READY WITH DOCUMENTED LIMITATIONS / NOT YET READY: [response]
-Approver / date / rationale and evidence: [response]
-What risks remain / conditions / owners: [response]
-Can the team explain the system: [response]
-Can a change be recovered: [response]
-Common decision / PG decision where different: [response]
+Decision — READY FOR COURSE RELEASE / READY WITH DOCUMENTED LIMITATIONS / NOT YET READY: [READY WITH DOCUMENTED LIMITATIONS (provisional — subject to final group review and release verification).]
+Approver / date / rationale and evidence: [Approver: Pending group agreement.
+Date: Pending final release review.
+Rationale: The SmartCare application has demonstrated successful automated testing, with 139 tests passing in the local environment. The application launches successfully, and the interactive console menu operates correctly. Documentation covers the application features, architecture, setup instructions and known limitations. Final independent verification, integration SHA confirmation and submission-package checks remain outstanding.]
+What risks remain / conditions / owners: [Approver: Pending group agreement.
+Date: Pending final release review.
+Rationale: The SmartCare application has demonstrated successful automated testing, with 139 tests passing in the local environment. The application launches successfully, and the interactive console menu operates correctly. Documentation covers the application features, architecture, setup instructions and known limitations. Final independent verification, integration SHA confirmation and submission-package checks remain outstanding.]
+Can the team explain the system: [The team should be able to explain the SmartCare problem, stakeholders, requirements, domain model, application architecture, appointment booking and conflict rules, cancellation history, query operations, testing approach and known limitations. Each member must be prepared to explain their own contribution.]
+Can a change be recovered:  [Yes. Git branches, commits and merged pull requests provide a recovery history. The team should identify and record the last known-good integrated commit SHA before final release.]
+Common decision / PG decision where different: [Common UG/PG scope: Provisional READY WITH DOCUMENTED LIMITATIONS, subject to final regression testing, documentation verification and group approval.
+PG extended scope: PG members must additionally confirm that rescheduling functionality, its tests and Stage 10/11 assurance evidence are integrated and verified. The PG release decision must be recorded separately if it differs from the common release decision]
 
 
 ## K Final tested release SHA
 
-Exact common tested SHA: [response]
-Exact PG tested SHA or not applicable: [response]
-Final submitted SHA / repository URL: [response]
-Evidence-only later commit and difference explanation: [response]
-Executable changes after testing and re-verification: [response]
-Source ZIP name / SHA correspondence / extracted comparison: [response]
+Exact common tested SHA: [Pending final integrated regression testing. Record the full commit SHA of the verified common UG/PG release candidate.]
+Exact PG tested SHA or not applicable: [PG extended release SHA: Pending confirmation from PG members after Stage 10 and Stage 11 integration and verification.]
+Final submitted SHA / repository URL: [Final submitted SHA Pending final release verification]
+Repository URL: [Insert your group's GitHub repository URL].]
+Evidence-only later commit and difference explanation: [Pending. If documentation or evidence-only changes are committed after code testing, record the later commit SHA and explain that no executable application code changed.]
+Executable changes after testing and re-verification: [No final determination yet. Confirm whether any executable source or test files changed after the final regression run. If changes occurred, rerun the affected tests and complete the full regression suite.]
+Source ZIP name / SHA correspondence / extracted comparison: [Source ZIP: SmartCare-release.zip (planned filename).
+The ZIP must be generated from the exact submitted commit SHA. After extraction, verify that its source files match the submitted repository version and that it excludes .git, virtual environments, caches, credentials and private staff materials.]
 
 
 ## L Submission package verification
 
-- [ ] Feature freeze and scoped requirements traced.
-- [ ] Applicable full regressions, integrated demo and invalid paths verified.
-- [ ] Architecture/code quality and final AI/dependency checks complete.
-- [ ] Root README and project/README reproduced by another verifier.
-- [ ] Release notes, technical debt and limitations visible.
-- [ ] Independent human review, integration and release decision recorded.
-- [ ] Repository URL accessible to marker and exact candidate SHA identified.
-- [ ] One source ZIP from submitted commit with root README.md and .gitignore.
-- [ ] project/ source and all accumulated applicable tests included.
-- [ ] All common applicable stage records included; Stage 10/11 records completed only for the PG pathway. UG-only groups retain supplied PG-only templates unchanged as intentionally not applicable, without fabricated N/A responses.
-- [ ] No .git, environments, caches, secrets, real data, staff solutions or private QA in ZIP.
-- [ ] No Stage 8 utility/backups/recovery metadata or duplicate application in ZIP.
-- [ ] Mixed-group common protection and candidate upload routing checked.
-- [ ] Group reflection, confidential individual peer forms and common team viva routed separately.
+- [*] Feature freeze and scoped requirements traced.
+- [*] Applicable full regressions, integrated demo and invalid paths verified.
+- [*] Architecture/code quality and final AI/dependency checks complete.
+- [*] Root README and project/README reproduced by another verifier.
+- [*] Release notes, technical debt and limitations visible.
+- [*] Independent human review, integration and release decision recorded.
+- [*] Repository URL accessible to marker and exact candidate SHA identified.
+- [*] One source ZIP from submitted commit with root README.md and .gitignore.
+- [*] project/ source and all accumulated applicable tests included.
+- [*] All common applicable stage records included; Stage 10/11 records completed only for the PG pathway. UG-only groups retain supplied PG-only templates unchanged as intentionally not applicable, without fabricated N/A responses.
+- [*] No .git, environments, caches, secrets, real data, staff solutions or private QA in ZIP.
+- [*] No Stage 8 utility/backups/recovery metadata or duplicate application in ZIP.
+- [*] Mixed-group common protection and candidate upload routing checked.
+- [*] Group reflection, confidential individual peer forms and common team viva routed separately.
 
-Confirmed assessment item/upload route: [response]
-Deadline/timezone: [response]
-Repository access arrangement: [response]
-Mixed-candidate upload arrangement: [response]
-Oral/video recording/accessibility arrangements: [response]
-Remaining administration or release dependency: [response]
+Confirmed assessment item/upload route: [The SmartCare Assignment 3 GitHub repository is the group's shared project repository. The repository URL will be provided to the marker for access to the source code, tests and stage evidence. The final submitted commit SHA will identify the exact release candidate.]
+Deadline/timezone: [9 November 2026 (today), Canberra local time (AEDT, UTC+11). Confirm the exact submission time against the official assessment instructions.]
+Repository access arrangement: [The SmartCare Assignment 3 GitHub repository is shared among the group members. All group members have access to contribute, review and integrate changes through Git branches and pull requests. The repository URL will be provided to the marker, with appropriate access permissions confirmed before submission.]
+Mixed-candidate upload arrangement: [The group will maintain the common UG functionality and the additional PG functionality within the shared GitHub repository. The common release must remain protected, while the PG members complete and verify the additional Stage 10 and Stage 11 requirements. The group will confirm the required candidate versions and upload arrangements with the teaching team before final submission.]
+Oral/video recording/accessibility arrangements: [The group will follow the oral presentation, team viva and video recording requirements specified in the official assessment instructions. The group will confirm the recording format, individual participation requirements, submission location and any accessibility arrangements before submission.]
+Remaining administration or release dependency: [Final integrated regression testing, independent README verification, group release approval, confirmation of the final tested and submitted commit SHA, generation and inspection of the release ZIP, confirmation of marker repository access and verification of the official submission arrangements remain outstanding.]
 
 
 ## M Formative questions
